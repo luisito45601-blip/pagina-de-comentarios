@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Al Giorno - Reseñas Google</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .chip-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .chip-button.selected {
+            background-color: #0F172A;
+            color: #ffffff;
+            border-color: #0F172A;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+            transform: translateY(-1px);
+        }
+        .pulse-subtle {
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.2); }
+            50% { box-shadow: 0 0 0 8px rgba(15, 23, 42, 0); }
+        }
+        .spin-anim {
+            animation: spin 0.4s ease-in-out;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-5">
+
+    <!-- Header Branding -->
+    <header class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 mb-3 text-center relative">
+        <button onclick="toggleQRModal()" title="Ver código QR para imprimir" class="absolute right-3 top-3 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs px-2.5 py-1.5 rounded-xl border border-amber-200/80 font-medium flex items-center gap-1.5 transition-all">
+            <i class="fa-solid fa-qrcode"></i>
+            <span class="hidden sm:inline">Ver QR</span>
+        </button>
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-slate-900 text-amber-400 rounded-xl mb-2 shadow-md">
+            <i class="fa-solid fa-bolt-lightning text-xl"></i>
+        </div>
+        <h1 class="text-lg font-extrabold text-slate-900 tracking-tight">AL GIORNO TECNOLOGÍA</h1>
+        <p class="text-xs text-amber-600 font-semibold flex items-center justify-center gap-1 mt-0.5">
+            <i class="fa-solid fa-location-dot"></i> Sambil Chacao • Nivel Libertador
+        </p>
+        <p class="text-[11px] text-slate-500 mt-1">Selecciona tus respuestas para armar tu reseña única en segundos</p>
+    </header>
+
+    <!-- Contenido del Cuestionario -->
+    <main class="space-y-3 flex-1 max-w-md mx-auto w-full">
+
+        <!-- Pregunta 1 -->
+        <section class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                1. ¿Qué compraste o consultaste hoy?
+            </label>
+            <div class="grid grid-cols-2 gap-2" id="group-product">
+                <button type="button" onclick="selectOption('product', 'Teléfono', this)" class="chip-button text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-left flex items-center gap-2">
+                    <i class="fa-solid fa-mobile-screen text-blue-500"></i> Teléfono
+                </button>
+                <button type="button" onclick="selectOption('product', 'Accesorio', this)" class="chip-button text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-left flex items-center gap-2">
+                    <i class="fa-solid fa-headphones text-purple-500"></i> Accesorio
+                </button>
+                <button type="button" onclick="selectOption('product', 'Electrodoméstico', this)" class="chip-button text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-left flex items-center gap-2">
+                    <i class="fa-solid fa-plug text-amber-500"></i> Electrodoméstico
+                </button>
+                <button type="button" onclick="selectOption('product', 'Otro producto', this)" class="chip-button text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-left flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-emerald-500"></i> Otro
+                </button>
+            </div>
+        </section>
+
+        <!-- Pregunta 2 -->
+        <section class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                2. Exp. / Lo que más te gustó
+            </label>
+            <div class="grid grid-cols-3 gap-2" id="group-experience">
+                <button type="button" onclick="selectOption('experience', 'Excelente atención', this)" class="chip-button text-xs font-medium px-2 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    <span class="block text-sm mb-0.5">⭐</span> Excelente atención
+                </button>
+                <button type="button" onclick="selectOption('experience', 'Rapidez', this)" class="chip-button text-xs font-medium px-2 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    <span class="block text-sm mb-0.5">⚡</span> Rapidez
+                </button>
+                <button type="button" onclick="selectOption('experience', 'Buenos precios', this)" class="chip-button text-xs font-medium px-2 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    <span class="block text-sm mb-0.5">🏷️</span> Buenos precios
+                </button>
+            </div>
+        </section>
+
+        <!-- Pregunta 3 -->
+        <section class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                3. ¿Qué fue lo que más te gustó?
+            </label>
+            <div class="grid grid-cols-2 gap-2" id="group-highlight">
+                <button type="button" onclick="selectOption('highlight', 'La asesoría clara', this)" class="chip-button text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-left">
+                    💡 La asesoría
+                </button>
+                <button type="button" onclick="selectOption('highlight', 'Los buenos precios', this)" class="chip-button text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-left">
+                    🏷️ Los precios
+                </button>
+                <button type="button" onclick="selectOption('highlight', 'La variedad de productos', this)" class="chip-button text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-left">
+                    📦 La variedad
+                </button>
+                <button type="button" onclick="selectOption('highlight', 'Financiamiento con Cashea', this)" class="chip-button text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-left">
+                    💛 Comprar con Cashea
+                </button>
+            </div>
+        </section>
+
+        <!-- Pregunta 4 -->
+        <section class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                4. Asesor que te atendió:
+            </label>
+            <div class="grid grid-cols-3 gap-2" id="group-advisor">
+                <button type="button" onclick="selectOption('advisor', 'Samuel', this)" class="chip-button text-xs font-medium px-2 py-2 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    👤 Samuel
+                </button>
+                <button type="button" onclick="selectOption('advisor', 'Diego', this)" class="chip-button text-xs font-medium px-2 py-2 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    👤 Diego
+                </button>
+                <button type="button" onclick="selectOption('advisor', 'Carlos', this)" class="chip-button text-xs font-medium px-2 py-2 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    👤 Carlos
+                </button>
+                <button type="button" onclick="selectOption('advisor', 'Viviana', this)" class="chip-button text-xs font-medium px-2 py-2 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    👤 Viviana
+                </button>
+                <button type="button" onclick="selectOption('advisor', 'Analuisa', this)" class="chip-button text-xs font-medium px-2 py-2 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    👤 Analuisa
+                </button>
+                <button type="button" onclick="selectOption('advisor', 'Camila', this)" class="chip-button text-xs font-medium px-2 py-2 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-center">
+                    👤 Camila
+                </button>
+            </div>
+        </section>
+
+        <!-- Reseña Generada -->
+        <section class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm relative">
+            <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <i class="fa-regular fa-pen-to-square text-blue-600"></i> Reseña lista para copiar:
+                </label>
+                <button type="button" onclick="regenerateTextWithAnimation()" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 active:scale-95 transition-all">
+                    <i id="reload-icon" class="fa-solid fa-rotate-right"></i>
+                    <span>Cambiar versión</span>
+                </button>
+            </div>
+            
+            <textarea id="review-result" rows="3" class="w-full text-xs text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none font-sans" placeholder="Toca las opciones arriba para generar tu reseña..."></textarea>
+        </section>
+
+    </main>
+
+    <!-- Botón Principal -->
+    <footer class="mt-4 max-w-md mx-auto w-full sticky bottom-2">
+        <button id="btn-submit" onclick="copyAndRedirect()" class="w-full bg-slate-900 hover:bg-slate-800 active:bg-black text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-slate-900/20 flex items-center justify-center gap-2.5 text-sm transition-all pulse-subtle">
+            <i class="fa-brands fa-google text-base text-amber-400"></i>
+            <span>Copiar e ir a Google Reviews</span>
+            <i class="fa-solid fa-arrow-right text-xs text-emerald-400"></i>
+        </button>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300 z-50">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-text">¡Reseña copiada! Redirigiendo...</span>
+    </div>
+
+    <!-- Modal de Código QR para Mostrador -->
+    <div id="qr-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-5 text-center shadow-2xl relative transform transition-all scale-95" id="qr-modal-card">
+            <button onclick="toggleQRModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="inline-flex items-center justify-center w-10 h-10 bg-slate-900 text-amber-400 rounded-xl mb-2">
+                <i class="fa-solid fa-qrcode text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">Código QR para la Tienda</h3>
+            <p class="text-xs text-slate-500 mt-0.5 mb-4">Escanea para probar o genera el enlace final de tu web publicada</p>
+            
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 inline-block mb-4">
+                <div id="qrcode-container" class="flex justify-center"></div>
+            </div>
+
+            <div class="space-y-2 text-left bg-amber-50 p-3 rounded-xl border border-amber-200/60 text-[11px] text-amber-900 mb-4">
+                <p class="font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-circle-info text-amber-600"></i> Enlace actual configurado:
+                </p>
+                <input type="text" id="custom-qr-url" oninput="updateQRCode(this.value)" class="w-full text-[11px] p-2 bg-white rounded-lg border border-amber-300 focus:outline-none" placeholder="https://tu-tienda.vercel.app">
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="downloadQR()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> Descargar Imagen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Lógica Avanzada -->
+    <script>
+        const selections = {
+            product: '',
+            experience: '',
+            highlight: '',
+            advisor: ''
+        };
+
+        const googleReviewUrl = 'https://search.google.com/local/writereview?placeid=ChIJo7_xIUD2K4gRX331M5p1p38';
+
+        function selectOption(category, value, element) {
+            const parent = element.parentElement;
+            const buttons = parent.querySelectorAll('.chip-button');
+            
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                selections[category] = '';
+            } else {
+                buttons.forEach(btn => btn.classList.remove('selected'));
+                element.classList.add('selected');
+                selections[category] = value;
+            }
+
+            generateReviewText();
+        }
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function regenerateTextWithAnimation() {
+            const icon = document.getElementById('reload-icon');
+            icon.classList.add('spin-anim');
+            setTimeout(() => icon.classList.remove('spin-anim'), 400);
+            generateReviewText();
+        }
+
+        function generateReviewText() {
+            const { product, experience, highlight, advisor } = selections;
+            
+            if (!product && !experience && !highlight && !advisor) {
+                document.getElementById('review-result').value = "";
+                return;
+            }
+
+            // Banco de nombres de la tienda para no sonar idéntico
+            const storeNames = ["Al Giorno Sambil Chacao", "Al Giorno en el Nivel Autopista del Sambil", "la tienda Al Giorno del Sambil Chacao", "Al Giorno Chacao"];
+            const store = getRandomItem(storeNames);
+
+            // Bloques de fragmentos
+            let advisorPhrases = [];
+            if (advisor) {
+                advisorPhrases = [
+                    `Me atendió ${advisor} y la atención fue de primera.`,
+                    `Súper agradecido con ${advisor} por el excelente trato y asesoría.`,
+                    `El trato recibido por parte de ${advisor} fue excelente.`,
+                    `${advisor} me brindó una atención impecable en todo momento.`,
+                    `Muy buena disposición y atención por parte de ${advisor}.`
+                ];
+            }
+
+            let productPhrases = [];
+            if (product) {
+                const prodLower = product.toLowerCase();
+                productPhrases = [
+                    `Pasé buscando un ${prodLower} y conseguí justo lo que quería.`,
+                    `Compré un ${prodLower} con total facilidad y confianza.`,
+                    `Buscaba un ${prodLower} y el proceso de compra fue súper rápido.`,
+                    `Excelente variedad para elegir ${prodLower}.`,
+                    `Quedé encantado con la compra de mi ${prodLower}.`
+                ];
+            }
+
+            let expPhrases = [];
+            if (experience) {
+                if (experience === 'Excelente atención') {
+                    expPhrases = [
+                        `La atención al cliente es verdaderamente impecable.`,
+                        `El servicio recibido fue de 10 estrellas.`,
+                        `Destaco enormemente la amabilidad del equipo.`
+                    ];
+                } else if (experience === 'Rapidez') {
+                    expPhrases = [
+                        `Todo el proceso de compra fue sumamente ágil y rápido.`,
+                        `Sin colas ni demoras, atención ultra rápida.`,
+                        `Proceso de compra súper efectivo y ágil.`
+                    ];
+                } else if (experience === 'Buenos precios') {
+                    expPhrases = [
+                        `Tienen unos precios excelentes comparados con el mercado.`,
+                        `Muy buenas ofertas e increíbles precios en tecnología.`,
+                        `Precios súper competitivos en el Sambil.`
+                    ];
+                }
+            }
+
+            let highlightPhrases = [];
+            if (highlight) {
+                if (highlight === 'Financiamiento con Cashea') {
+                    highlightPhrases = [
+                        `Lo mejor fue poder pagar cómodamente con Cashea.`,
+                        `Aproveché el financiamiento con Cashea y el proceso fue súper fácil.`,
+                        `Súper genial que tengan la opción de compra a cuotas con Cashea.`
+                    ];
+                } else if (highlight === 'La asesoría clara') {
+                    highlightPhrases = [
+                        `Me dio mucha confianza la excelente asesoría que me brindaron.`,
+                        `Aclararon todas mis dudas con una atención técnica brillante.`,
+                        `La explicación y guía sobre los productos fue impecable.`
+                    ];
+                } else if (highlight === 'Los buenos precios') {
+                    highlightPhrases = [
+                        `Tienen precios imbatibles en tecnología aquí en el Sambil.`,
+                        `Los costos están súper accesibles y competitivos.`,
+                        `Excelente relación calidad-precio en todo.`
+                    ];
+                } else if (highlight === 'La variedad de productos') {
+                    highlightPhrases = [
+                        `La variedad de equipos y modelos disponibles es enorme.`,
+                        `Tienen un catálogo súper completo para escoger.`,
+                        `Conseguí el modelo exacto gracias a su amplio stock.`
+                    ];
+                }
+            }
+
+            let closings = [
+                `¡100% recomendados!`,
+                `Sin duda seguiré comprando aquí.`,
+                `Totalmente recomendado visitar esta tienda.`,
+                `¡Volveré pronto seguro!`,
+                `5 estrellas muy bien merecidas.`
+            ];
+
+            // Construcción aleatoria de orden de ideas
+            let mainParts = [];
+
+            // Añadir apertura con la tienda o combinación
+            const introStyles = [
+                `Excelente experiencia visitando ${store}.`,
+                `Muy contento con mi visita a ${store}.`,
+                `Súper recomendado ${store}.`,
+                `Estuve hoy en ${store} y la experiencia fue genial.`
+            ];
+
+            mainParts.push(getRandomItem(introStyles));
+
+            // Generar un orden aleatorio de los detalles seleccionados
+            let detailBlocks = [];
+            if (advisorPhrases.length) detailBlocks.push(getRandomItem(advisorPhrases));
+            if (productPhrases.length) detailBlocks.push(getRandomItem(productPhrases));
+            if (expPhrases.length) detailBlocks.push(getRandomItem(expPhrases));
+            if (highlightPhrases.length) detailBlocks.push(getRandomItem(highlightPhrases));
+
+            // Desordenar los detalles para máxima variabilidad
+            detailBlocks.sort(() => Math.random() - 0.5);
+
+            mainParts = mainParts.concat(detailBlocks);
+            mainParts.push(getRandomItem(closings));
+
+            // Emojis opcionales
+            const emojis = ['👍', '⭐', '👏', '🔥', '💯', '✨'];
+            let result = mainParts.join(' ');
+            
+            if (Math.random() > 0.4) {
+                result += ' ' + getRandomItem(emojis);
+            }
+
+            document.getElementById('review-result').value = result;
+        }
+
+        function copyAndRedirect() {
+            const reviewText = document.getElementById('review-result').value.trim();
+
+            if (!reviewText) {
+                showToast("Por favor selecciona al menos una opción.", true);
+                return;
+            }
+
+            // Copiado al portapapeles
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(reviewText);
+            } else {
+                const textArea = document.getElementById('review-result');
+                textArea.select();
+                document.execCommand('copy');
+            }
+
+            showToast("¡Reseña copiada! Abriendo Google...");
+
+            setTimeout(() => {
+                window.open(googleReviewUrl, '_blank');
+            }, 1000);
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastText.innerText = message;
+            
+            if (isError) {
+                toastIcon.className = "fa-solid fa-circle-exclamation text-amber-400";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2200);
+        }
+
+        // Selección inicial sugerida
+        window.onload = function() {
+            const firstProduct = document.querySelector('#group-product button');
+            const firstExp = document.querySelector('#group-experience button');
+            const firstHighlight = document.querySelector('#group-highlight button');
+
+            if (firstProduct && firstExp && firstHighlight) {
+                firstProduct.click();
+                firstExp.click();
+                firstHighlight.click();
+            }
+
+            initQRCode();
+        };
+
+        // Lógica de Código QR
+        let qrCodeObj = null;
+
+        function initQRCode() {
+            const currentUrl = window.location.href;
+            document.getElementById('custom-qr-url').value = currentUrl;
+
+            qrCodeObj = new QRCode(document.getElementById("qrcode-container"), {
+                text: currentUrl,
+                width: 180,
+                height: 180,
+                colorDark : "#0F172A",
+                colorLight : "#FFFFFF",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        function updateQRCode(newUrl) {
+            if (qrCodeObj && newUrl.trim() !== '') {
+                qrCodeObj.clear();
+                qrCodeObj.makeCode(newUrl.trim());
+            }
+        }
+
+        function toggleQRModal() {
+            const modal = document.getElementById('qr-modal');
+            const card = document.getElementById('qr-modal-card');
+            if (modal.classList.contains('opacity-0')) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                card.classList.remove('scale-100');
+                card.classList.add('scale-95');
+            }
+        }
+
+        function downloadQR() {
+            const img = document.querySelector('#qrcode-container img');
+            if (img) {
+                const link = document.createElement('a');
+                link.download = 'QR-Resenas-AlGiorno.png';
+                link.href = img.src;
+                link.click();
+            } else {
+                showToast("Generando QR...", true);
+            }
+        }
+    </script>
+</body>
+</html>
